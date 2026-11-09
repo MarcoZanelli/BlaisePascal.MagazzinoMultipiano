@@ -3,7 +3,7 @@
     public class Magazzino
     {
         public int[,] quantita;
-        public string[][] RegistroCodiciArticoli;
+        public string?[][] RegistroCodiciArticoli;
 
         public Magazzino(int piani, int corridoi, int capacitaPiani)
         {
@@ -56,15 +56,22 @@
 
         public void RimuoviArticolo(int piano, int numeroDelCodice)
         {
+
             if (piano < 0 || piano >= RegistroCodiciArticoli.Length)
                 throw new ArgumentException("Piano non trovato");
 
             if (numeroDelCodice < 0 || numeroDelCodice >= RegistroCodiciArticoli[piano].Length)
                 throw new ArgumentException("Numero del codice non trovato");
 
-            RegistroCodiciArticoli[piano][numeroDelCodice] = null;
+            if (RegistroCodiciArticoli[piano][numeroDelCodice] == null)
+                throw new ArgumentException("Nessun articolo presente alla posizione specificata");
 
-            //TODO: aggiungere lo slittamento dei codici articolo successivi per evitare buchi nel registro
+            for (int i = numeroDelCodice; i < RegistroCodiciArticoli[piano].Length - 1; i++)
+            {
+                RegistroCodiciArticoli[piano][i] = RegistroCodiciArticoli[piano][i + 1];
+            }
+
+            RegistroCodiciArticoli[piano][RegistroCodiciArticoli[piano].Length - 1] = null;
         }
 
         public void PianoPiuAffollato()
