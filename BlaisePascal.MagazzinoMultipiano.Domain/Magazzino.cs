@@ -5,7 +5,7 @@
         public int[,] quantita;
         public string[][] RegistroCodiciArticoli;
 
-        public Magazzino(int piani, int corridoi, int capacitaInizialePiani)
+        public Magazzino(int piani, int corridoi, int capacitaPiani)
         {
             quantita = new int[piani, corridoi];
 
@@ -13,7 +13,9 @@
 
             for (int i = 0; i < piani; i++)
             {
-                RegistroCodiciArticoli[piani] = new string[capacitaInizialePiani];
+                if (capacitaPiani <= 0)
+                    throw new ArgumentException("La capacità dei piani deve essere maggiore di zero");
+                RegistroCodiciArticoli[piani] = new string[capacitaPiani];
             }
         }
 
@@ -38,24 +40,69 @@
             quantita[piano, corridoio] -= numeroScatole;
         }
 
-        public void StoccaggioArticolo(int piano, int corridoio, string codiceArticolo)
+        public void StoccaggioArticolo(int piano, int numeroDelCodice, string codiceArticolo)
         {
             if (piano < 0 || piano >= RegistroCodiciArticoli.Length)
                 throw new ArgumentException("Piano non trovato");
             
-            if (corridoio < 0 || corridoio >= RegistroCodiciArticoli[piano].Length)
-                throw new ArgumentException("Corridoio non trovato");
+            if (numeroDelCodice < 0 || numeroDelCodice >= RegistroCodiciArticoli[piano].Length)
+                throw new ArgumentException("Numero del codice non trovato");
 
             if (string.IsNullOrEmpty(codiceArticolo))
                 throw new ArgumentException("Il codice articolo non può essere vuoto");
 
-            if (RegistroCodiciArticoli[piano][corridoio] != null)
-                throw new ArgumentException("C'è già un articolo in questo corridoio");
-
-            RegistroCodiciArticoli[piano][corridoio] = codiceArticolo;
+            RegistroCodiciArticoli[piano][numeroDelCodice] = codiceArticolo;
         }
 
+        public void RimuoviArticolo(int piano, int numeroDelCodice)
+        {
+            if (piano < 0 || piano >= RegistroCodiciArticoli.Length)
+                throw new ArgumentException("Piano non trovato");
 
+            if (numeroDelCodice < 0 || numeroDelCodice >= RegistroCodiciArticoli[piano].Length)
+                throw new ArgumentException("Numero del codice non trovato");
 
+            RegistroCodiciArticoli[piano][numeroDelCodice] = null;
+
+            //TODO: aggiungere lo slittamento dei codici articolo successivi per evitare buchi nel registro
+        }
+
+        public void PianoPiuAffollato()
+        {
+            int maxScatole = 0;
+            int pianoPiuAffollato = -1;
+            for (int piano = 0; piano < quantita.GetLength(0); piano++)
+            {
+                int totaleScatole = 0;
+                for (int corridoio = 0; corridoio < quantita.GetLength(1); corridoio++)
+                {
+                    totaleScatole += quantita[piano, corridoio];
+                }
+
+                if (totaleScatole > maxScatole)
+                {
+                    maxScatole = totaleScatole;
+                    pianoPiuAffollato = piano;
+                }
+            }
+
+            if (pianoPiuAffollato == -1)
+                throw new ArgumentException("Non ci sono scatole nel magazzino");
+        }
+
+        public string CercaArticolo(string codiceArticolo)
+        {
+            for (int piano = 0; piano < RegistroCodiciArticoli.Length; piano++)
+            {
+                for (int numeroDelCodice = 0; numeroDelCodice < RegistroCodiciArticoli[piano].Length; numeroDelCodice++)
+                {
+                    if (RegistroCodiciArticoli[piano][numeroDelCodice] == codiceArticolo)
+                    {
+                        return RegistroCodiciArticoli[piano][numeroDelCodice];
+                    }
+                }
+            }
+            throw new ArgumentException("Articolo non trovato");
+        }
     }
 }
