@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/doc/" />
+  <Folder Name="/src/">
+    <Project Path="BlaisePascal.MagazzinoMultipiano.Domain/BlaisePascal.MagazzinoMultipiano.Domain.csproj" />
+    <Project Path="BlaisePascal.MagazzinoMultipiano.UIConsole/BlaisePascal.MagazzinoMultipiano.UIConsole.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="BlaisePascal.MagazzinoMultipiano.Test/BlaisePascal.MagazzinoMultipiano.Test.csproj" />
+  </Folder>
+</Solution>
